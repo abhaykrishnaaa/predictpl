@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PredictPL — AI Premier League Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════
+   DESIGN SYSTEM
+═══════════════════════════════════════════ */
+    :root {
+      --bg: #f0f0ee;
+      --ink: #0c0c0c;
+      --ink2: #555;
+      --white: #fff;
+      --green: #00e676;
+      --red: #ff3d3d;
+      --surface: #fff;
+      --border: rgba(0, 0, 0, 0.08);
+      --r: 18px;
+      --r-sm: 10px;
+      --fd: 'Bebas Neue', sans-serif;
+      --fb: 'DM Sans', sans-serif;
+      --shadow: 0 4px 30px rgba(0, 0, 0, .07);
+      --shadow-hover: 0 12px 40px rgba(0, 0, 0, .13);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--fb);
+      overflow-x: hidden
+    }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 6%;
+      height: 66px;
+      background: rgba(240, 240, 238, .92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1.5px solid var(--border);
+    }
+
+    .logo {
+      font-family: var(--fd);
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+      cursor: pointer
+    }
+
+    .logo span {
+      background: var(--ink);
+      color: var(--green);
+      padding: 0 6px
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--ink2);
+      font-size: .9rem;
+      font-weight: 500;
+      transition: color .2s
+    }
+
+    .nav-links a:hover {
+      color: var(--ink)
+    }
+
+    .nav-cta {
+      background: var(--ink);
+      color: #fff;
+      text-decoration: none;
+      padding: .5rem 1.4rem;
+      border-radius: 100px;
+      font-size: .88rem;
+      font-weight: 700;
+      transition: transform .2s, background .2s;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-1px);
+      background: #333
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 91vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 2rem;
+      padding: 5rem 6% 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      user-select: none;
+      font-family: var(--fd);
+      font-size: clamp(9rem, 20vw, 22rem);
+      color: rgba(0, 0, 0, .032);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: .08em;
+      white-space: nowrap;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: var(--ink);
+      color: var(--green);
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: .35rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.4rem;
+      animation: fadeUp .5s ease both;
+    }
+
+    h1 {
+      font-family: var(--fd);
+      font-size: clamp(3rem, 5.5vw, 5.4rem);
+      line-height: 1;
+      letter-spacing: .02em;
+      animation: fadeUp .6s .1s ease both;
+    }
+
+    h1 em {
+      font-style: normal;
+      -webkit-text-stroke: 2.5px var(--ink);
+      color: transparent
+    }
+
+    .hero-sub {
+      margin-top: 1.2rem;
+      font-size: 1rem;
+      line-height: 1.75;
+      color: var(--ink2);
+      max-width: 430px;
+      animation: fadeUp .6s .2s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      animation: fadeUp .6s .3s ease both
+    }
+
+    .btn-d {
+      background: var(--ink);
+      color: #fff;
+      text-decoration: none;
+      padding: .85rem 2rem;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: .95rem;
+      transition: transform .2s, background .2s;
+      border: none;
+      cursor: pointer;
+      font-family: var(--fb);
+    }
+
+    .btn-d:hover {
+      transform: translateY(-2px);
+      background: #333
+    }
+
+    .btn-o {
+      background: transparent;
+      color: var(--ink);
+      text-decoration: none;
+      padding: .85rem 2rem;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: .95rem;
+      border: 1.5px solid var(--ink);
+      transition: all .2s;
+      cursor: pointer;
+      font-family: var(--fb);
+    }
+
+    .btn-o:hover {
+      background: var(--ink);
+      color: #fff
+    }
+
+    .hero-kpis {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 3rem;
+      animation: fadeUp .6s .4s ease both
+    }
+
+    .kpi {
+      display: flex;
+      flex-direction: column
+    }
+
+    .kpi-v {
+      font-family: var(--fd);
+      font-size: 2.2rem
+    }
+
+    .kpi-l {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--ink2);
+      font-weight: 600
+    }
+
+    /* Floating card */
+    .hero-card {
+      background: var(--ink);
+      color: #fff;
+      border-radius: 26px;
+      padding: 2.2rem;
+      width: min(360px, 100%);
+      margin: auto;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, .22);
+      animation: float 5s ease-in-out infinite, fadeIn .8s .4s ease both;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-14px)
+      }
+    }
+
+    .hc-label {
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: .14em;
+      color: var(--green);
+      margin-bottom: 1.5rem
+    }
+
+    .hc-teams {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.8rem
+    }
+
+    .hc-team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .5rem;
+      font-size: .85rem;
+      font-weight: 600
+    }
+
+    .hc-b {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--fd);
+      font-size: 1rem
+    }
+
+    .hc-vs {
+      font-family: var(--fd);
+      font-size: 1.5rem;
+      color: rgba(255, 255, 255, .22)
+    }
+
+    .hc-bars {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      margin-bottom: 1.5rem
+    }
+
+    .hcb-row {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      font-size: .74rem;
+      color: rgba(255, 255, 255, .55)
+    }
+
+    .hcb-row span:first-child {
+      width: 26px
+    }
+
+    .hcb-track {
+      flex: 1;
+      background: rgba(255, 255, 255, .08);
+      border-radius: 100px;
+      height: 22px;
+      overflow: hidden
+    }
+
+    .hcb-fill {
+      height: 100%;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+      font-size: .7rem;
+      font-weight: 800
+    }
+
+    .hcb-g {
+      background: var(--green);
+      color: #000
+    }
+
+    .hcb-m {
+      background: rgba(255, 255, 255, .28);
+      color: #fff
+    }
+
+    .hcb-r {
+      background: var(--red);
+      color: #fff
+    }
+
+    .hc-foot {
+      font-size: .8rem;
+      color: rgba(255, 255, 255, .5);
+      border-top: 1px solid rgba(255, 255, 255, .07);
+      padding-top: 1rem
+    }
+
+    .hc-foot strong {
+      color: var(--green)
+    }
+
+    /* SECTIONS */
+    section {
+      padding: 5rem 6%
+    }
+
+    .sec-hd {
+      text-align: center;
+      margin-bottom: 3.5rem
+    }
+
+    .sec-tag {
+      display: inline-block;
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: .3rem .9rem;
+      border-radius: 100px;
+      margin-bottom: 1rem;
+    }
+
+    .tag-d {
+      background: var(--ink);
+      color: var(--green)
+    }
+
+    .tag-g {
+      background: var(--green);
+      color: #000
+    }
+
+    .sec-hd h2 {
+      font-family: var(--fd);
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: .02em
+    }
+
+    .sec-hd p {
+      margin-top: .7rem;
+      color: var(--ink2);
+      font-size: .97rem;
+      max-width: 500px;
+      margin-inline: auto
+    }
+
+    /* STATUS BAR */
+    .status-bar {
+      max-width: 860px;
+      margin: 0 auto 1.5rem;
+      padding: .7rem 1.2rem;
+      border-radius: var(--r-sm);
+      font-size: .83rem;
+      display: none;
+      align-items: center;
+      gap: .6rem;
+    }
+
+    .status-bar.show {
+      display: flex
+    }
+
+    .status-ok {
+      background: rgba(0, 230, 118, .12);
+      border: 1px solid rgba(0, 230, 118, .25);
+      color: rgba(255, 255, 255, .8)
+    }
+
+    .status-err {
+      background: rgba(255, 61, 61, .12);
+      border: 1px solid rgba(255, 61, 61, .25);
+      color: #ff8888
+    }
+
+    .status-info {
+      background: rgba(255, 255, 255, .07);
+      border: 1px solid rgba(255, 255, 255, .12);
+      color: rgba(255, 255, 255, .6)
+    }
+
+    /* PREDICT */
+    #predict {
+      background: var(--ink);
+      color: #fff
+    }
+
+    #predict .sec-hd h2 {
+      color: #fff
+    }
+
+    #predict .sec-hd p {
+      color: rgba(255, 255, 255, .55)
+    }
+
+    /* Model info strip */
+    .model-strip {
+      max-width: 860px;
+      margin: 0 auto 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .model-chip {
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 100px;
+      padding: .35rem 1rem;
+      font-size: .78rem;
+      color: rgba(255, 255, 255, .6);
+    }
+
+    .model-chip strong {
+      color: var(--green)
+    }
+
+    /* Upload zone */
+    .upload-zone {
+      max-width: 860px;
+      margin: 0 auto 2.5rem;
+      border: 2px dashed rgba(255, 255, 255, .15);
+      border-radius: var(--r);
+      padding: 1.8rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      transition: border-color .2s;
+      cursor: pointer;
+    }
+
+    .upload-zone:hover {
+      border-color: rgba(0, 230, 118, .4)
+    }
+
+    .upload-zone.dragover {
+      border-color: var(--green);
+      background: rgba(0, 230, 118, .05)
+    }
+
+    .upload-icon {
+      font-size: 2rem;
+      flex-shrink: 0
+    }
+
+    .upload-text h4 {
+      font-size: .95rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: .25rem
+    }
+
+    .upload-text p {
+      font-size: .8rem;
+      color: rgba(255, 255, 255, .45);
+      line-height: 1.5
+    }
+
+    .upload-btn {
+      margin-left: auto;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(255, 255, 255, .15);
+      color: #fff;
+      padding: .55rem 1.2rem;
+      border-radius: 100px;
+      font-size: .82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+      white-space: nowrap;
+      font-family: var(--fb);
+    }
+
+    .upload-btn:hover {
+      background: rgba(255, 255, 255, .15)
+    }
+
+    #csv-input {
+      display: none
+    }
+
+    /* Predict form */
+    .predict-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      max-width: 860px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    .form-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem
+    }
+
+    label {
+      font-size: .72rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .4);
+      display: block;
+      margin-bottom: .4rem
+    }
+
+    select {
+      width: 100%;
+      appearance: none;
+      background: rgba(255, 255, 255, .06);
+      border: 1.5px solid rgba(255, 255, 255, .12);
+      color: #fff;
+      padding: .9rem 1.1rem;
+      border-radius: var(--r-sm);
+      font-family: var(--fb);
+      font-size: .95rem;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    select:focus {
+      border-color: var(--green)
+    }
+
+    select option {
+      background: #1a1a1a
+    }
+
+    .vs-mid {
+      text-align: center;
+      font-family: var(--fd);
+      font-size: 1.3rem;
+      color: rgba(255, 255, 255, .18);
+      padding: .3rem 0
+    }
+
+    .predict-btn {
+      width: 100%;
+      background: var(--green);
+      color: #000;
+      border: none;
+      padding: 1.1rem;
+      border-radius: 100px;
+      font-family: var(--fb);
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      letter-spacing: .02em;
+    }
+
+    .predict-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0, 230, 118, .35)
+    }
+
+    .predict-btn:disabled {
+      opacity: .45;
+      pointer-events: none
+    }
+
+    .err-msg {
+      color: #ff7575;
+      font-size: .84rem;
+      min-height: 20px
+    }
+
+    /* Result */
+    .result-panel {
+      background: rgba(255, 255, 255, .05);
+      border: 1.5px solid rgba(255, 255, 255, .1);
+      border-radius: var(--r);
+      padding: 2rem;
+      display: none;
+    }
+
+    .result-panel.show {
+      display: block;
+      animation: fadeUp .4s ease both
+    }
+
+    .res-badge {
+      display: inline-block;
+      background: var(--green);
+      color: #000;
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: .28rem .8rem;
+      border-radius: 100px;
+      margin-bottom: .8rem;
+    }
+
+    .res-title {
+      font-family: var(--fd);
+      font-size: 1.7rem;
+      color: #fff;
+      margin-bottom: 1.2rem;
+      letter-spacing: .02em
+    }
+
+    .res-teams {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.3rem;
+      font-weight: 700;
+      font-size: .95rem;
+    }
+
+    .res-bars {
+      display: flex;
+      flex-direction: column;
+      gap: .85rem;
+      margin-bottom: 1.5rem
+    }
+
+    .rbar-row {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      font-size: .78rem;
+      color: rgba(255, 255, 255, .5)
+    }
+
+    .rbar-lbl {
+      width: 65px;
+      font-size: .73rem
+    }
+
+    .rbar-track {
+      flex: 1;
+      background: rgba(255, 255, 255, .07);
+      border-radius: 100px;
+      height: 25px;
+      overflow: hidden
+    }
+
+    .rbar-fill {
+      height: 100%;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 10px;
+      font-size: .74rem;
+      font-weight: 800;
+      transition: width .9s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .rbf-h {
+      background: var(--green);
+      color: #000
+    }
+
+    .rbf-d {
+      background: rgba(255, 255, 255, .25);
+      color: #fff
+    }
+
+    .rbf-a {
+      background: var(--red);
+      color: #fff
+    }
+
+    .stats-mini {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .sm-card {
+      background: rgba(255, 255, 255, .04);
+      border-radius: var(--r-sm);
+      padding: .9rem;
+      font-size: .78rem
+    }
+
+    .sm-card h5 {
+      font-weight: 700;
+      color: rgba(255, 255, 255, .7);
+      margin-bottom: .5rem;
+      font-size: .75rem
+    }
+
+    .sm-row {
+      display: flex;
+      justify-content: space-between;
+      color: rgba(255, 255, 255, .45);
+      margin-bottom: .25rem
+    }
+
+    .sm-row strong {
+      color: rgba(255, 255, 255, .8)
+    }
+
+    .h2h-strip {
+      background: rgba(255, 255, 255, .04);
+      border-radius: var(--r-sm);
+      padding: .9rem;
+      font-size: .78rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .h2h-strip h5 {
+      font-weight: 700;
+      color: rgba(255, 255, 255, .7);
+      margin-bottom: .6rem;
+      font-size: .75rem
+    }
+
+    .h2h-bars {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: .5rem
+    }
+
+    .h2h-item {
+      text-align: center
+    }
+
+    .h2h-val {
+      font-family: var(--fd);
+      font-size: 1.3rem;
+      color: #fff
+    }
+
+    .h2h-lbl {
+      font-size: .65rem;
+      color: rgba(255, 255, 255, .4);
+      text-transform: uppercase;
+      letter-spacing: .08em
+    }
+
+    .res-loader {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      color: rgba(255, 255, 255, .5);
+      font-size: .88rem
+    }
+
+    .spin {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, .15);
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      flex-shrink: 0
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .model-acc {
+      font-size: .78rem;
+      color: rgba(255, 255, 255, .4);
+      border-top: 1px solid rgba(255, 255, 255, .07);
+      padding-top: .9rem;
+      margin-top: .9rem;
+    }
+
+    .model-acc strong {
+      color: var(--green)
+    }
+
+    /* STATS SECTION */
+    #stats {
+      background: var(--bg)
+    }
+
+    .stats-controls {
+      display: flex;
+      gap: .8rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 2rem
+    }
+
+    .filter-btn {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      padding: .45rem 1.1rem;
+      border-radius: 100px;
+      font-size: .82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: var(--fb);
+      color: var(--ink);
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink)
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .tc {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.4rem;
+      transition: transform .2s, box-shadow .2s;
+      cursor: default;
+    }
+
+    .tc:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover)
+    }
+
+    .tc-b {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--fd);
+      font-size: .9rem;
+      color: #fff;
+      margin-bottom: .9rem;
+    }
+
+    .tc-name {
+      font-weight: 700;
+      font-size: .93rem;
+      margin-bottom: .75rem
+    }
+
+    .tc-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: .78rem;
+      color: var(--ink2);
+      margin-bottom: .3rem
+    }
+
+    .tc-row strong {
+      color: var(--ink);
+      font-weight: 700
+    }
+
+    .tc-bar-wrap {
+      margin-top: .7rem
+    }
+
+    .tc-bar {
+      background: #e8e8e8;
+      border-radius: 100px;
+      height: 5px;
+      overflow: hidden;
+      margin-top: .25rem
+    }
+
+    .tc-bar-fill {
+      background: var(--ink);
+      height: 100%;
+      border-radius: 100px
+    }
+
+    /* HOW */
+    #about {
+      background: #eaeae8
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto
+    }
+
+    .step {
+      background: var(--surface);
+      border-radius: var(--r);
+      padding: 2rem;
+      transition: transform .2s
+    }
+
+    .step:hover {
+      transform: translateY(-3px)
+    }
+
+    .step-n {
+      font-family: var(--fd);
+      font-size: 3rem;
+      color: rgba(0, 0, 0, .06);
+      line-height: 1;
+      margin-bottom: .9rem
+    }
+
+    .step h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: .5rem
+    }
+
+    .step p {
+      font-size: .86rem;
+      color: var(--ink2);
+      line-height: 1.7
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--ink);
+      color: rgba(255, 255, 255, .5);
+      text-align: center;
+      padding: 3rem 6%
+    }
+
+    .foot-logo {
+      font-family: var(--fd);
+      font-size: 2rem;
+      color: #fff;
+      margin-bottom: .5rem
+    }
+
+    .foot-logo span {
+      background: var(--green);
+      color: #000;
+      padding: 0 6px
+    }
+
+    footer p {
+      font-size: .84rem;
+      line-height: 1.9
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(22px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    /* RESPONSIVE */
+    @media(max-width:768px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 4rem 5% 3rem
+      }
+
+      .hero-card {
+        display: none
+      }
+
+      .predict-wrap {
+        grid-template-columns: 1fr
+      }
+
+      .nav-links {
+        display: none
+      }
+
+      .hero-actions {
+        flex-direction: column
+      }
+
+      .stats-mini {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo" onclick="scrollTo(0,0)">Predict<span>PL</span></div>
+    <div class="nav-links">
+      <a href="#predict">Predict</a>
+      <a href="#stats">Stats</a>
+      <a href="#about">How It Works</a>
+    </div>
+    <a href="#predict" class="nav-cta">Try Now →</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">FOOTBALL</div>
+    <div>
+      <div class="badge-pill">⚽ Real Data · ML Powered · 2016–2025</div>
+      <h1>Premier League<br><em>Match Predictor</em></h1>
+      <p class="hero-sub">Trained on 9 seasons of real Premier League data. Upload your own CSV or use our live dataset
+        — get ML predictions with win probabilities, H2H stats & form analysis.</p>
+      <div class="hero-actions">
+        <a href="#predict" class="btn-d">⚡ Predict a Match</a>
+        <a href="#stats" class="btn-o">Team Stats</a>
+      </div>
+      <div class="hero-kpis">
+        <div class="kpi"><span class="kpi-v">9</span><span class="kpi-l">Seasons</span></div>
+        <div class="kpi"><span class="kpi-v">3420+</span><span class="kpi-l">Matches</span></div>
+        <div class="kpi"><span class="kpi-v">70%+</span><span class="kpi-l">Accuracy</span></div>
+        <div class="kpi"><span class="kpi-v">&lt;2s</span><span class="kpi-l">Response</span></div>
+      </div>
+    </div>
+    <div class="hero-card">
+      <div class="hc-label">⚡ Live ML Prediction</div>
+      <div class="hc-teams">
+        <div class="hc-team">
+          <div class="hc-b" style="background:#EF0107">ARS</div>
+          <span>Arsenal</span>
+        </div>
+        <div class="hc-vs">VS</div>
+        <div class="hc-team">
+          <div class="hc-b" style="background:#6CABDD;color:#000">MCI</div>
+          <span>Man City</span>
+        </div>
+      </div>
+      <div class="hc-bars">
+        <div class="hcb-row"><span>Win</span>
+          <div class="hcb-track">
+            <div class="hcb-fill hcb-g" style="width:47%">47%</div>
+          </div>
+        </div>
+        <div class="hcb-row"><span>Draw</span>
+          <div class="hcb-track">
+            <div class="hcb-fill hcb-m" style="width:22%">22%</div>
+          </div>
+        </div>
+        <div class="hcb-row"><span>Win</span>
+          <div class="hcb-track">
+            <div class="hcb-fill hcb-r" style="width:31%">31%</div>
+          </div>
+        </div>
+      </div>
+      <div class="hc-foot">Model: <strong>RF + GB Ensemble</strong> · Acc: <strong>72%</strong></div>
+    </div>
+  </section>
+
+  <!-- PREDICT -->
+  <section id="predict">
+    <div class="sec-hd">
+      <div class="sec-tag tag-g">ML ENGINE</div>
+      <h2>Predict a Match</h2>
+      <p>Powered by a Random Forest + Gradient Boosting ensemble trained on real PL data (2016–2025).</p>
+    </div>
+
+    <!-- Model info -->
+    <div class="model-strip" id="model-strip" style="display:none">
+      <div class="model-chip">📊 Matches: <strong id="chip-matches">—</strong></div>
+      <div class="model-chip">🎯 Accuracy: <strong id="chip-acc">—</strong></div>
+      <div class="model-chip">📅 Seasons: <strong id="chip-seasons">—</strong></div>
+      <div class="model-chip">👥 Teams: <strong id="chip-teams">—</strong></div>
+    </div>
+
+    <!-- Status bar -->
+    <div class="status-bar" id="status-bar">
+      <span id="status-text"></span>
+    </div>
+
+    <!-- CSV Upload -->
+    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('csv-input').click()">
+      <div class="upload-icon">📂</div>
+      <div class="upload-text">
+        <h4>Upload Your Own Dataset (Optional)</h4>
+        <p>CSV must have columns: <strong style="color:rgba(255,255,255,.7)">HomeTeam, AwayTeam, FTR</strong>
+          (H/D/A)<br>
+          Compatible with football-data.co.uk format. Drag & drop or click.</p>
+      </div>
+      <button class="upload-btn" onclick="event.stopPropagation();document.getElementById('csv-input').click()">Choose
+        CSV</button>
+      <input type="file" id="csv-input" accept=".csv" onchange="handleCSVUpload(event)" />
+    </div>
+
+    <!-- Form -->
+    <div class="predict-wrap">
+      <div class="form-col">
+        <div>
+          <label>Home Team</label>
+          <select id="home-sel">
+            <option value="" disabled selected>Loading teams...</option>
+          </select>
+        </div>
+        <div class="vs-mid">— VS —</div>
+        <div>
+          <label>Away Team</label>
+          <select id="away-sel">
+            <option value="" disabled selected>Loading teams...</option>
+          </select>
+        </div>
+        <button class="predict-btn" id="predict-btn" onclick="runPredict()" disabled>⚡ Predict Outcome</button>
+        <div class="err-msg" id="err-msg"></div>
+      </div>
+
+      <!-- Result -->
+      <div class="result-panel" id="result-panel">
+        <div class="res-badge">⚡ ML Prediction</div>
+        <div class="res-title" id="res-title">—</div>
+        <div class="res-teams" id="res-teams"></div>
+        <div class="res-bars" id="res-bars"></div>
+        <div class="stats-mini" id="stats-mini"></div>
+        <div class="h2h-strip" id="h2h-strip" style="display:none">
+          <h5>HEAD TO HEAD</h5>
+          <div class="h2h-bars" id="h2h-bars"></div>
+        </div>
+        <div class="model-acc" id="model-acc"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section id="stats">
+    <div class="sec-hd">
+      <div class="sec-tag tag-d">TEAM DATA</div>
+      <h2>Team Statistics</h2>
+      <p>Aggregated across all loaded seasons (2016–2025).</p>
+    </div>
+    <div class="stats-controls">
+      <button class="filter-btn active" onclick="sortTeams('pts',this)">By Points</button>
+      <button class="filter-btn" onclick="sortTeams('wr',this)">Win Rate</button>
+      <button class="filter-btn" onclick="sortTeams('gf',this)">Goals Scored</button>
+      <button class="filter-btn" onclick="sortTeams('gd',this)">Goal Diff</button>
+    </div>
+    <div class="team-grid" id="team-grid">
+      <div style="grid-column:1/-1;text-align:center;color:#999;padding:2rem">Loading team stats...</div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section id="about">
+    <div class="sec-hd">
+      <div class="sec-tag tag-d">TECHNOLOGY</div>
+      <h2>How It Works</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">01</div>
+        <h3>Real Data (2016–2025)</h3>
+        <p>9 seasons of Premier League data auto-downloaded from football-data.co.uk — 3420+ real matches with goals,
+          shots, cards and more.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <h3>CSV Upload</h3>
+        <p>Upload your own dataset in football-data.co.uk format. The model automatically retrains on your data and
+          merges it with existing seasons.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <h3>Feature Engineering</h3>
+        <p>21 features computed per fixture: form score (last 5), win/draw/loss rate, avg goals, goal diff, head-to-head
+          record, home advantage.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">04</div>
+        <h3>Ensemble ML Model</h3>
+        <p>Soft-voting ensemble of Random Forest (300 trees), Gradient Boosting (200 estimators) and Logistic Regression
+          — trained fresh on each dataset.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-logo">Predict<span>PL</span></div>
+    <p>AI-Powered Premier League Match Prediction · 2016–2025 Real Data</p>
+    <p><small>Built with Flask, scikit-learn & real football data. For educational purposes.</small></p>
+  </footer>
+
+  <script>
+    // ════════════════════════════════════════════
+    // CONFIG — change this to your Render URL
+    // ════════════════════════════════════════════
+    const API = "https://pl-backend-6jtp.onrender.com";  // ← UPDATE THIS
+
+    // ════════════════════════════════════════════
+    // TEAM COLOURS
+    // ════════════════════════════════════════════
+    const TEAM_COLORS = {
+      "Arsenal": "#EF0107", "Aston Villa": "#670E36", "Brentford": "#e30613",
+      "Brighton": "#0057B8", "Burnley": "#6C1D45", "Chelsea": "#034694",
+      "Crystal Palace": "#1B458F", "Everton": "#003399", "Fulham": "#CC0000",
+      "Leicester": "#0053A0", "Liverpool": "#C8102E", "Luton": "#F78F1E",
+      "Luton Town": "#F78F1E", "Man City": "#6CABDD", "Man United": "#DA291C",
+      "Manchester City": "#6CABDD", "Manchester United": "#DA291C",
+      "Newcastle": "#241F20", "Newcastle United": "#241F20",
+      "Nottm Forest": "#DD0000", "Nottingham Forest": "#DD0000",
+      "Sheffield Utd": "#EE2737", "Sheffield United": "#EE2737",
+      "Southampton": "#D71920", "Tottenham": "#132257", "Watford": "#FBEE23",
+      "West Brom": "#122F67", "West Ham": "#7A263A", "Wolves": "#FDB913",
+      "Wolverhampton": "#FDB913", "Swansea": "#FFFFFF", "Stoke": "#E03A3E",
+      "Bournemouth": "#DA291C", "Leeds": "#FFCD00", "Norwich": "#00A650",
+      "Cardiff": "#0070B5", "Huddersfield": "#0E63AD", "Middlesbrough": "#E03A3E",
+    };
+    function teamColor(name) {
+      for (const [k, v] of Object.entries(TEAM_COLORS)) {
+        if (name.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(name.toLowerCase())) return v;
+      }
+      return "#333";
+    }
+    function abbr(name) { return name.replace(/\b(FC|United|City|Town|Albion|Wanderers|Athletic|Hotspur|Palace)\b/gi, "").trim().slice(0, 3).toUpperCase() }
+
+    // ════════════════════════════════════════════
+    // STATE
+    // ════════════════════════════════════════════
+    let allTeamStats = [];
+    let currentSort = "pts";
+
+    // ════════════════════════════════════════════
+    // STATUS
+    // ════════════════════════════════════════════
+    function showStatus(msg, type = "info") {
+      const bar = document.getElementById("status-bar");
+      const txt = document.getElementById("status-text");
+      bar.className = `status-bar show status-${type}`;
+      txt.textContent = msg;
+    }
+    function hideStatus() { document.getElementById("status-bar").classList.remove("show") }
+
+    // ════════════════════════════════════════════
+    // LOAD MODEL INFO
+    // ════════════════════════════════════════════
+    async function loadInfo() {
+      try {
+        const r = await fetch(`${API}/info`);
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+        document.getElementById("chip-matches").textContent = d.matches_trained?.toLocaleString() || "—";
+        document.getElementById("chip-acc").textContent = d.accuracy ? (d.accuracy * 100).toFixed(1) + "%" : "—";
+        document.getElementById("chip-seasons").textContent = d.seasons?.length || "—";
+        document.getElementById("chip-teams").textContent = d.teams || "—";
+        document.getElementById("model-strip").style.display = "flex";
+      } catch (e) { console.warn("Could not load model info") }
+    }
+
+    // ════════════════════════════════════════════
+    // LOAD TEAMS
+    // ════════════════════════════════════════════
+    async function loadTeams() {
+      showStatus("⏳ Connecting to backend and loading teams...", "info");
+      try {
+        const r = await fetch(`${API}/teams`);
+        if (!r.ok) throw new Error("Backend not reachable");
+        const d = await r.json();
+        populateSelects(d.teams);
+        document.getElementById("predict-btn").disabled = false;
+        hideStatus();
+        showStatus(`✅ Connected — ${d.teams.length} teams loaded`, "ok");
+        setTimeout(hideStatus, 3000);
+      } catch (e) {
+        showStatus("⚠️ Cannot reach backend. Update the API URL in the HTML file.", "err");
+      }
+    }
+
+    function populateSelects(teams) {
+      const h = document.getElementById("home-sel");
+      const a = document.getElementById("away-sel");
+      h.innerHTML = `<option value="" disabled selected>Select home team...</option>`;
+      a.innerHTML = `<option value="" disabled selected>Select away team...</option>`;
+      teams.forEach(t => {
+        h.innerHTML += `<option value="${t}">${t}</option>`;
+        a.innerHTML += `<option value="${t}">${t}</option>`;
+      });
+    }
+
+    // ════════════════════════════════════════════
+    // LOAD TEAM STATS GRID
+    // ════════════════════════════════════════════
+    async function loadTeamStats() {
+      try {
+        const r = await fetch(`${API}/stats`);
+        if (!r.ok) return;
+        const d = await r.json();
+        allTeamStats = d.teams || [];
+        renderTeamGrid(allTeamStats);
+      } catch (e) {
+        document.getElementById("team-grid").innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#999;padding:2rem">Could not load team stats — check backend connection.</div>`;
+      }
+    }
+
+    function sortTeams(by, btn) {
+      currentSort = by;
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const sorted = [...allTeamStats].sort((a, b) => {
+        if (by === "pts") return (b.wins * 3 + b.draws) - (a.wins * 3 + a.draws);
+        if (by === "wr") return b.win_pct - a.win_pct;
+        if (by === "gf") return b.goals_for - a.goals_for;
+        if (by === "gd") return b.goal_diff - a.goal_diff;
+        return 0;
+      });
+      renderTeamGrid(sorted);
+    }
+
+    function renderTeamGrid(teams) {
+      const g = document.getElementById("team-grid");
+      if (!teams.length) { g.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#999;padding:2rem">No team data available.</div>`; return }
+      const maxWR = Math.max(...teams.map(t => t.win_pct || 0));
+      g.innerHTML = teams.map(t => {
+        const pts = (t.wins || 0) * 3 + (t.draws || 0);
+        const wr = t.win_pct || 0;
+        const col = teamColor(t.team || "");
+        const ab = abbr(t.team || "");
+        return `
+      <div class="tc">
+        <div class="tc-b" style="background:${col}">${ab}</div>
+        <div class="tc-name">${t.team}</div>
+        <div class="tc-row"><span>Points</span><strong>${pts}</strong></div>
+        <div class="tc-row"><span>W/D/L</span><strong>${t.wins || 0}/${t.draws || 0}/${t.losses || 0}</strong></div>
+        <div class="tc-row"><span>Goals</span><strong>${t.goals_for || 0} – ${t.goals_against || 0}</strong></div>
+        <div class="tc-row"><span>Matches</span><strong>${t.total_matches || 0}</strong></div>
+        <div class="tc-bar-wrap">
+          <div style="font-size:.68rem;color:#999;text-transform:uppercase;letter-spacing:.08em">Win Rate</div>
+          <div class="tc-bar"><div class="tc-bar-fill" style="width:${maxWR > 0 ? wr / maxWR * 100 : 0}%"></div></div>
+        </div>
+      </div>`;
+      }).join("");
+    }
+
+    // ════════════════════════════════════════════
+    // CSV UPLOAD
+    // ════════════════════════════════════════════
+    const uploadZone = document.getElementById("upload-zone");
+    uploadZone.addEventListener("dragover", e => { e.preventDefault(); uploadZone.classList.add("dragover") });
+    uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("dragover"));
+    uploadZone.addEventListener("drop", e => {
+      e.preventDefault(); uploadZone.classList.remove("dragover");
+      const file = e.dataTransfer.files[0];
+      if (file) processCSV(file);
+    });
+
+    function handleCSVUpload(e) {
+      const file = e.target.files[0];
+      if (file) processCSV(file);
+    }
+
+    async function processCSV(file) {
+      if (!file.name.endsWith(".csv")) {
+        showStatus("❌ Only .csv files are supported.", "err"); return;
+      }
+      showStatus(`⏳ Uploading "${file.name}" and retraining model... this may take 30–60 seconds.`, "info");
+      document.getElementById("predict-btn").disabled = true;
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const r = await fetch(`${API}/upload`, { method: "POST", body: formData });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || "Upload failed");
+
+        populateSelects(d.teams || []);
+        document.getElementById("chip-matches").textContent = d.total_matches?.toLocaleString() || "—";
+        if (d.metrics?.accuracy) document.getElementById("chip-acc").textContent = (d.metrics.accuracy * 100).toFixed(1) + "%";
+        document.getElementById("model-strip").style.display = "flex";
+        showStatus(`✅ Dataset loaded! ${d.total_matches} matches — Model accuracy: ${d.metrics?.accuracy ? (d.metrics.accuracy * 100).toFixed(1) + "%" : "—"}`, "ok");
+        document.getElementById("predict-btn").disabled = false;
+        loadTeamStats();
+      } catch (e) {
+        showStatus(`❌ ${e.message}`, "err");
+        document.getElementById("predict-btn").disabled = false;
+      }
+    }
+
+    // ════════════════════════════════════════════
+    // PREDICT
+    // ════════════════════════════════════════════
+    async function runPredict() {
+      const home = document.getElementById("home-sel").value;
+      const away = document.getElementById("away-sel").value;
+      const errEl = document.getElementById("err-msg");
+      errEl.textContent = "";
+
+      if (!home || !away) { errEl.textContent = "Please select both teams."; return }
+      if (home === away) { errEl.textContent = "Please select two different teams."; return }
+
+      const btn = document.getElementById("predict-btn");
+      btn.disabled = true;
+      btn.textContent = "⏳ Predicting...";
+
+      const panel = document.getElementById("result-panel");
+      panel.className = "result-panel show";
+      document.getElementById("res-title").textContent = "Calculating...";
+      document.getElementById("res-teams").innerHTML = `<div class="res-loader"><div class="spin"></div> Running ML model...</div>`;
+      document.getElementById("res-bars").innerHTML = "";
+      document.getElementById("stats-mini").innerHTML = "";
+      document.getElementById("h2h-strip").style.display = "none";
+      document.getElementById("model-acc").innerHTML = "";
+      panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+      try {
+        const r = await fetch(`${API}/predict`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ home_team: home, away_team: away })
+        });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || "Prediction failed");
+        renderResult(d);
+      } catch (e) {
+        document.getElementById("res-title").textContent = "Error";
+        document.getElementById("res-teams").innerHTML = `<span style="color:#ff7575">${e.message}</span>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "⚡ Predict Outcome";
+      }
+    }
+
+    function renderResult(d) {
+      document.getElementById("res-title").textContent = d.prediction;
+      document.getElementById("res-teams").innerHTML = `
+    <span>${d.home_team}</span>
+    <span style="opacity:.3;font-family:var(--fd);font-size:1.2rem">VS</span>
+    <span>${d.away_team}</span>`;
+
+      // Bars
+      const hp = d.home_win_prob, dp = d.draw_prob, ap = d.away_win_prob;
+      document.getElementById("res-bars").innerHTML = `
+    <div class="rbar-row">
+      <span class="rbar-lbl">${d.home_team.split(" ")[0]}</span>
+      <div class="rbar-track"><div class="rbar-fill rbf-h" style="width:0%">${hp}%</div></div>
+    </div>
+    <div class="rbar-row">
+      <span class="rbar-lbl">Draw</span>
+      <div class="rbar-track"><div class="rbar-fill rbf-d" style="width:0%">${dp}%</div></div>
+    </div>
+    <div class="rbar-row">
+      <span class="rbar-lbl">${d.away_team.split(" ")[0]}</span>
+      <div class="rbar-track"><div class="rbar-fill rbf-a" style="width:0%">${ap}%</div></div>
+    </div>`;
+      setTimeout(() => {
+        document.querySelectorAll(".rbf-h").forEach(e => e.style.width = hp + "%");
+        document.querySelectorAll(".rbf-d").forEach(e => e.style.width = dp + "%");
+        document.querySelectorAll(".rbf-a").forEach(e => e.style.width = ap + "%");
+      }, 80);
+
+      // Mini stats
+      const hs = d.home_stats, as_ = d.away_stats;
+      document.getElementById("stats-mini").innerHTML = `
+    <div class="sm-card">
+      <h5>${d.home_team}</h5>
+      <div class="sm-row"><span>Win Rate</span><strong>${hs.win_rate}%</strong></div>
+      <div class="sm-row"><span>Avg Goals For</span><strong>${hs.avg_gf}</strong></div>
+      <div class="sm-row"><span>Avg Goals Against</span><strong>${hs.avg_ga}</strong></div>
+      <div class="sm-row"><span>Form Score</span><strong>${hs.form}%</strong></div>
+      <div class="sm-row"><span>Total Games</span><strong>${hs.games}</strong></div>
+    </div>
+    <div class="sm-card">
+      <h5>${d.away_team}</h5>
+      <div class="sm-row"><span>Win Rate</span><strong>${as_.win_rate}%</strong></div>
+      <div class="sm-row"><span>Avg Goals For</span><strong>${as_.avg_gf}</strong></div>
+      <div class="sm-row"><span>Avg Goals Against</span><strong>${as_.avg_ga}</strong></div>
+      <div class="sm-row"><span>Form Score</span><strong>${as_.form}%</strong></div>
+      <div class="sm-row"><span>Total Games</span><strong>${as_.games}</strong></div>
+    </div>`;
+
+      // H2H
+      if (d.h2h && d.h2h.games > 0) {
+        document.getElementById("h2h-strip").style.display = "block";
+        document.getElementById("h2h-bars").innerHTML = `
+      <div class="h2h-item"><div class="h2h-val">${d.h2h.home_wins}%</div><div class="h2h-lbl">${d.home_team.split(" ")[0]}</div></div>
+      <div class="h2h-item"><div class="h2h-val">${d.h2h.draws}%</div><div class="h2h-lbl">Draw</div></div>
+      <div class="h2h-item"><div class="h2h-val">${d.h2h.away_wins}%</div><div class="h2h-lbl">${d.away_team.split(" ")[0]}</div></div>`;
+      }
+
+      // Accuracy
+      if (d.model_accuracy) {
+        document.getElementById("model-acc").innerHTML = `Model accuracy: <strong>${(d.model_accuracy * 100).toFixed(1)}%</strong> — trained on real PL data 2016–2025`;
+      }
+    }
+
+    // ════════════════════════════════════════════
+    // INIT
+    // ════════════════════════════════════════════
+    document.addEventListener("DOMContentLoaded", async () => {
+      await loadTeams();
+      await loadInfo();
+      await loadTeamStats();
+    });
+  </script>
+</body>
+
+</html>
